@@ -1,26 +1,15 @@
 //
-//  Utils.swift
+//  Utils+UIKit.swift
+//  XPresentation
 //
-//  Created by kaizei on 16/10/18.
-//  Copyright © 2016年 kaizei. All rights reserved.
+//  Created by kai wang on 2018/10/16.
+//  Copyright © 2018 kai wang. All rights reserved.
 //
 
 import UIKit
 
-
-/**
- a placeholder ViewController which hold the presented view. you will need this if you only have a view to present.
- ```
- // create
- let containerVC = PresentationContainerViewController(view: aView)
- // config
- containerVC.configPresentation(...)
- // present
- vc.presentViewController(containerVC, animated: true, completion: nil)
- ```
- */
 public final class PresentationContainerViewController: UIViewController {
-
+    
     private let presentedView: UIView
     
     public init(view: UIView) {
@@ -98,7 +87,7 @@ public final class PresentationWindow: UIWindow {
         
         makeKeyAndVisible()
         if async {
-            DispatchQueue.main.async {
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1/60) {
                 _ = self
                 action(root)
             }
@@ -241,160 +230,3 @@ public final class PresentationWindow: UIWindow {
         return self
     }
 }
-
-
-// MARK: - Layout. uses AutoLayout
-
-/**
- some helper layout methods. all uses AutoLayout. you can write your own.
- */
-public enum PresentationLayout {
-    
-    /// describes how to make **width** and **height** constraint.
-    public enum Dimension {
-        case value(CGFloat)
-        case fillParent
-    }
-    
-    public static func center(width: Dimension?, height: Dimension?, xConstant: CGFloat = 0, yConstant: CGFloat = 0) -> LayoutBlock {
-            return { container, presented in
-                presented.translatesAutoresizingMaskIntoConstraints = false
-                NSLayoutConstraint(item: presented, attribute: .centerX, relatedBy: .equal, toItem: container, attribute: .centerX, multiplier: 1, constant: xConstant).isActive = true
-                NSLayoutConstraint(item: presented, attribute: .centerY, relatedBy: .equal, toItem: container, attribute: .centerY, multiplier: 1, constant: yConstant).isActive = true
-                PresentationLayout.makeSize(container: container, presented: presented, width: width, height: height)
-            }
-    }
-    
-    public static func top(width: Dimension?, height: Dimension?, yConstant: CGFloat = 0) -> LayoutBlock {
-        return { container, presented in
-            presented.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint(item: presented, attribute: .centerX, relatedBy: .equal, toItem: container, attribute: .centerX, multiplier: 1, constant: 0).isActive = true
-            NSLayoutConstraint(item: presented, attribute: .top, relatedBy: .equal, toItem: container, attribute: .top, multiplier: 1, constant: yConstant).isActive = true
-            PresentationLayout.makeSize(container: container, presented: presented, width: width, height: height)
-        }
-    }
-    
-    public static func bottom(width: Dimension?, height: Dimension?, yConstant: CGFloat = 0) -> LayoutBlock {
-        return { container, presented in
-            presented.translatesAutoresizingMaskIntoConstraints = false
-            NSLayoutConstraint(item: presented, attribute: .centerX, relatedBy: .equal, toItem: container, attribute: .centerX, multiplier: 1, constant: 0).isActive = true
-            NSLayoutConstraint(item: presented, attribute: .bottom, relatedBy: .equal, toItem: container, attribute: .bottom, multiplier: 1, constant: yConstant).isActive = true
-            PresentationLayout.makeSize(container: container, presented: presented, width: width, height: height)
-        }
-    }
-    
-    static private func makeSize(container: UIView, presented: UIView, width: Dimension?, height: Dimension?) {
-        func addConstraint(dimension: Dimension, attribute: NSLayoutConstraint.Attribute) {
-            switch dimension {
-            case .value(let constant):
-                NSLayoutConstraint(item: presented, attribute: attribute, relatedBy: .equal, toItem: nil, attribute: .notAnAttribute, multiplier: 1, constant: constant).isActive = true
-            case .fillParent:
-                NSLayoutConstraint(item: presented, attribute: attribute, relatedBy: .equal, toItem: container, attribute: attribute, multiplier: 1, constant: 0).isActive = true
-            }
-        }
-        
-        if let width = width {
-            addConstraint(dimension: width, attribute: .width)
-        }
-        
-        if let height = height {
-            addConstraint(dimension: height, attribute: .height)
-        }
-        
-    }
-    
-}
-
-
-// MARK: - Public Animations
-
-/**
- helper animations for **present** and **dismiss**. you can write your own.
- 
- all helper animations will not use presenting view.
- */
-public enum PresentationAnimations {
-    
-    public enum FlipDirection {
-        case top, right, bottom, left
-    }
-    
-    public static func flipIn(direction: FlipDirection) -> AnimationBlock {
-        return { container, presenting, presented, animator in
-            let frame = presented.frame
-            switch direction {
-            case .top: presented.center.y -= frame.maxY
-            case .right: presented.center.x += container.bounds.width - frame.minX
-            case .bottom: presented.center.y += container.bounds.height - frame.minY
-            case .left: presented.center.x -= frame.maxX
-            }
-            animator.animate(animations: {
-                switch direction {
-                case .top: presented.center.y += frame.maxY
-                case .right: presented.center.x -= container.bounds.width - frame.minX
-                case .bottom: presented.center.y -= container.bounds.height - frame.minY
-                case .left: presented.center.x += frame.maxX
-                }
-                }, completion: nil)
-        }
-    }
-    
-    public static func flipOut(direction: FlipDirection) -> AnimationBlock {
-        return { container, presenting, presented, animator in
-            let frame = presented.frame
-            animator.animate(animations: {
-                switch direction {
-                case .top: presented.center.y -= frame.maxY
-                case .right: presented.center.x += container.bounds.width - frame.minX
-                case .bottom: presented.center.y += container.bounds.height - frame.minY
-                case .left: presented.center.x -= frame.maxX
-                }
-                }, completion: nil)
-        }
-    }
-    
-    /// will change alpha and transform.
-    public static func zoomIn(scale: CGFloat = 0.8, alpha: CGFloat = 0) -> AnimationBlock {
-        return { container, presenting, presented, animator in
-            presented.transform = CGAffineTransform(scaleX: scale, y: scale)
-            presented.alpha = alpha
-            animator.animate(animations: {
-                presented.transform = CGAffineTransform.identity
-                presented.alpha = 1
-                }, completion: nil)
-        }
-    }
-    
-    /// will change alpha and transform.
-    public static func zoomOut(scale: CGFloat = 0.8, alpha: CGFloat = 0) -> AnimationBlock {
-        return { container, presenting, presented, animator in
-            animator.animate(animations: {
-                presented.transform = CGAffineTransform(scaleX: scale, y: scale)
-                presented.alpha = alpha
-                }, completion: nil)
-        }
-    }
-    
-    /// will change alpha.
-    public static func fadeIn(centerYDiff diff: CGFloat = 50) -> AnimationBlock {
-        return { container, presenting, presented, animator in
-            presented.center.y += diff
-            presented.alpha = 0
-            animator.animate(animations: {
-                presented.center.y -= diff
-                presented.alpha = 1
-                }, completion: nil)
-        }
-    }
-    
-    public static func fadeOut(centerYDiff diff: CGFloat = 50) -> AnimationBlock {
-        return { container, presenting, presented, animator in
-            animator.animate(animations: {
-                presented.center.y += diff
-                presented.alpha = 0
-                }, completion: nil)
-        }
-    }
-    
-}
-
