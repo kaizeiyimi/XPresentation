@@ -1,7 +1,7 @@
 {
   "name": "XPresentation",
   "swift_version": "4.2",
-  "version": "1.0",
+  "version": "1.0.1",
   "summary": "perform presentation easily",
   "homepage": "https://github.com/kaizeiyimi/XPresentation",
   "authors": "kaizei",
@@ -13,11 +13,11 @@
     "kaizei": "kaizeiyimi@126.com"
   },
   "platforms": {
-    "ios": "10.0"
+    "ios": "9.0"
   },
   "source": {
     "git": "https://github.com/kaizeiyimi/XPresentation.git",
-    "tag": "1.0"
+    "tag": "1.0.1"
   },
   "source_files": "XPresentation/**/*.swift"
 }
