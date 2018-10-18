@@ -42,7 +42,28 @@ present(viewController, animated: true, completion: nil)
 ```
 
 # Present in Separate Window
-see the API...
+
+some times we want to `present` a page, but the logic cannot be controlled very well. the API `presentXXX` & `dismissXXX` are easy to make problems.
+
+one solution is to make another window where the page is presented in. That is:
+
+- make a window with specified level.
+- set a rootViewController with clear background color.
+- make window visible.
+- present your page using the rootViewController.
+
+since this is another window, other windows such as app's main window is not affected. you can still perform present or push/pop in other windows.
+for example, every time user click a notification to enter your app, you want to show a page related to the notification, you can use a new window to present the page.
+
+```
+let window = PresentationWindow(level: UIWindow.Level(1988), preferredStatusBarStyle: .lightContent)
+window.present(yourPage)
+```
+
+when dismissed, app's main window will be set the `keyWindow`.
 
 # Present Using Popover
-see the API...
+
+popover is `AutoLayout` unfriendly. page size must be provided by `preferredContentSize`, it's also the same property to change page size. 
+
+the util api provided is just a simple configuration wrapper.

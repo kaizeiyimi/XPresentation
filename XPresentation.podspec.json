@@ -1,5 +1,6 @@
 {
   "name": "XPresentation",
+  "swift_version": "4.2",
   "version": "1.0",
   "summary": "perform presentation easily",
   "homepage": "https://github.com/kaizeiyimi/XPresentation",
