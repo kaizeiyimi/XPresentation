@@ -49,11 +49,12 @@ extension Presentation {
 // provides two basic animation wrapper
 extension Presentation.BasicAnimation {
     public static func spring(action: Action, duration: TimeInterval = 0.3, usingSpringWithDamping: CGFloat = 0.997, initialSpringVelocity: CGFloat = 0.2, options: UIView.AnimationOptions = [],
-                              animator: Presentation.Animations.Animator) -> Presentation.BasicAnimation {
+                              animator: @escaping @autoclosure () -> Presentation.Animations.Animator) -> Presentation.BasicAnimation {
         return Presentation.BasicAnimation(action: action, duration: duration) { context in
-            animator.prepare(context)
+            let (prepare, animate) = animator()
+            prepare(context)
             UIView.animate(withDuration: duration, delay: 0, usingSpringWithDamping: usingSpringWithDamping, initialSpringVelocity: initialSpringVelocity, options: options, animations: {
-                animator.animate(context)
+                animate(context)
             }, completion: { finished in
                 context.completeTransition(finished)
             })
@@ -61,11 +62,12 @@ extension Presentation.BasicAnimation {
     }
     
     public static func normal(action: Action, duration: TimeInterval = 0.25, options: UIView.AnimationOptions = [],
-                              animator: Presentation.Animations.Animator) -> Presentation.BasicAnimation {
+                              animator: @escaping @autoclosure () -> Presentation.Animations.Animator) -> Presentation.BasicAnimation {
         return Presentation.BasicAnimation(action: action, duration: duration) { context in
-            animator.prepare(context)
+            let (prepare, animate) = animator()
+            prepare(context)
             UIView.animate(withDuration: duration, delay: 0, options: options, animations: {
-                animator.animate(context)
+                animate(context)
             }, completion: { finished in
                 context.completeTransition(finished)
             })
@@ -83,26 +85,21 @@ extension Presentation {
         }
         
         public static func flipIn(direction: FlipDirection) -> Animator {
-            var frame: CGRect = .zero
+            var originTransform: CGAffineTransform = .identity
             return (
                 prepare: { context in
                     guard let toView = context.view(forKey: .to) else { return }
-                    frame = toView.frame
+                    originTransform = toView.transform
                     switch direction {
-                    case .top: toView.center.y -= frame.maxY
-                    case .right: toView.center.x += context.containerView.bounds.width - frame.minX
-                    case .bottom: toView.center.y += context.containerView.bounds.height - frame.minY
-                    case .left: toView.center.x -= frame.maxX
+                    case .top: toView.transform = toView.transform.translatedBy(x: 0, y: -context.containerView.bounds.height)
+                    case .right: toView.transform = toView.transform.translatedBy(x: context.containerView.bounds.width, y: 0)
+                    case .bottom: toView.transform = toView.transform.translatedBy(x: 0, y: context.containerView.bounds.height)
+                    case .left: toView.transform = toView.transform.translatedBy(x: -context.containerView.bounds.width, y: 0)
                     }
                 },
                 animate: { context in
                     guard let toView = context.view(forKey: .to) else { return }
-                    switch direction {
-                    case .top: toView.center.y += frame.maxY
-                    case .right: toView.center.x -= context.containerView.bounds.width - frame.minX
-                    case .bottom: toView.center.y -= context.containerView.bounds.height - frame.minY
-                    case .left: toView.center.x += frame.maxX
-                    }
+                    toView.transform = originTransform
                 }
             )
         }
@@ -112,12 +109,11 @@ extension Presentation {
                 prepare: {_ in},
                 animate: { context in
                     guard let fromView = context.view(forKey: .from) else { return }
-                    let frame = fromView.frame
                     switch direction {
-                    case .top: fromView.center.y -= frame.maxY
-                    case .right: fromView.center.x += context.containerView.bounds.width - frame.minX
-                    case .bottom: fromView.center.y += context.containerView.bounds.height - frame.minY
-                    case .left: fromView.center.x -= frame.maxX
+                    case .top: fromView.transform = fromView.transform.translatedBy(x: 0, y: -context.containerView.bounds.height)
+                    case .right: fromView.transform = fromView.transform.translatedBy(x: context.containerView.bounds.width, y: 0)
+                    case .bottom: fromView.transform = fromView.transform.translatedBy(x: 0, y: context.containerView.bounds.height)
+                    case .left: fromView.transform = fromView.transform.translatedBy(x: -context.containerView.bounds.width, y: 0)
                     }
                 }
             )
@@ -130,7 +126,7 @@ extension Presentation {
                 prepare: { context in
                     guard let toView = context.view(forKey: .to) else { return }
                     (originTransform, originAlpha) = (toView.transform, toView.alpha)
-                    toView.transform = toView.transform.concatenating(CGAffineTransform(scaleX: scale, y: scale))
+                    toView.transform = toView.transform.scaledBy(x: scale, y: scale)
                     toView.alpha = toView.alpha * alpha
                 },
                 animate: { context in
@@ -146,7 +142,7 @@ extension Presentation {
                 prepare: {_ in},
                 animate: { context in
                     guard let fromView = context.view(forKey: .from) else { return }
-                    fromView.transform = fromView.transform.concatenating(CGAffineTransform(scaleX: scale, y: scale))
+                    fromView.transform = fromView.transform.scaledBy(x: scale, y: scale)
                     fromView.alpha = fromView.alpha * alpha
                 }
             )

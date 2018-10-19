@@ -41,6 +41,8 @@ Then, you can present the viewController just as usual:
 present(viewController, animated: true, completion: nil)
 ```
 
+Notice a very important thing: `BasicAnimation` provided here uses `@autoclosure` on the `animator` parameter.  
+
 # Present in Separate Window
 
 some times we want to `present` a page, but the logic cannot be controlled very well. the API `presentXXX` & `dismissXXX` are easy to make problems.
