@@ -8,32 +8,13 @@
 
 import UIKit
 
-public final class PresentationContainerViewController: UIViewController {
-    
-    private let presentedView: UIView
-    
-    public init(view: UIView) {
-        presentedView = view
-        super.init(nibName: nil, bundle: nil)
-    }
-    
-    public required init?(coder aDecoder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    public override func loadView() {
-        view = presentedView
-    }
-    
-}
-
-
 /// make a window with a root VC for presentation
 public final class PresentationWindow: UIWindow {
     
     private final class RootViewController: UIViewController {
         var statusBarStyle: UIStatusBarStyle = .default
         override var preferredStatusBarStyle: UIStatusBarStyle { return statusBarStyle }
+        var presentationWindow: PresentationWindow?
         
         override func loadView() {
             super.loadView()
@@ -48,16 +29,13 @@ public final class PresentationWindow: UIWindow {
         }
     }
     
-    public init(level: UIWindow.Level, root: UIViewController) {
+    public init(level: UIWindow.Level, preferredStatusBarStyle: UIStatusBarStyle) {
         super.init(frame: UIScreen.main.bounds)
-        rootViewController = root
-        windowLevel = level
-    }
-    
-    public convenience init(level: UIWindow.Level, preferredStatusBarStyle: UIStatusBarStyle) {
         let root = RootViewController()
         root.statusBarStyle = preferredStatusBarStyle
-        self.init(level: level, root: root)
+        
+        rootViewController = root
+        windowLevel = level
     }
     
     public required init?(coder aDecoder: NSCoder) {
@@ -73,65 +51,66 @@ public final class PresentationWindow: UIWindow {
     
     @discardableResult
     public func present(_ vc: UIViewController, async: Bool = true, animated: Bool = true, completion: (() -> Void)? = nil) -> UIWindow {
-        return present(async: async, action: { root in
-            root.present(vc, animated: animated, completion: completion)
-        })
-    }
-    
-    @discardableResult
-    public func present(async: Bool = true, action: @escaping (_ root: UIViewController) -> Void) -> UIWindow {
-        guard let root = rootViewController else {
-            assertionFailure("presentation window must have a root view controller!")
-            return self
+        makeKeyAndVisible()
+        
+        let present = {
+            defer {
+                self.rootViewController?.present(vc, animated: animated, completion: completion)
+            }
+            
+            //
+            final class Trigger: NSObject {
+                static var associatedKey = "XPresentation.Trigger.Key"
+                var completion: (() -> Void)?
+                deinit {
+                    completion?()
+                }
+            }
+            
+            (self.rootViewController as? RootViewController)?.presentationWindow = self
+            let trigger = Trigger()
+            trigger.completion = {[weak self] in
+                (self?.rootViewController as? RootViewController)?.presentationWindow = nil
+            }
+            objc_setAssociatedObject(vc, &Trigger.associatedKey, trigger, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         }
         
-        makeKeyAndVisible()
         if async {
-            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1/60) {
-                _ = self
-                action(root)
-            }
+            DispatchQueue.main.asyncAfter(deadline: DispatchTime.now() + 1/60) { present() }
         } else {
-            action(root)
+            present()
         }
+        
         return self
     }
     
+    /**
+     Nav should setup rootViewController before present.
+     Nav's rootViewController should be transparent, typically `UIViewController()` is fine.
+     */
     @discardableResult
     public func presentTransparentRootNav<Nav: UINavigationController>(
         _ nav: Nav,
-        root: UIViewController,
         delegation: (Nav, PresentationNavDelegate) -> Void = { $0.delegate = $1 },
         push vc: UIViewController,
         async: Bool = true, animated: Bool = true, completion: (() -> Void)? = nil) -> UIWindow {
         
-        return presentTransparentRootNav(nav, root: root, delegation: delegation, push: {nav, root in nav.pushViewController(vc, animated: animated)}, async: async, completion: completion)
-    }
-    
-    @discardableResult
-    public func presentTransparentRootNav<Nav: UINavigationController, Root: UIViewController>(
-        _ nav: Nav,
-        root: Root,
-        delegation: (Nav, PresentationNavDelegate) -> Void = { $0.delegate = $1 },
-        push action: @escaping (Nav, Root) -> Void,
-        async: Bool = true, completion: (() -> Void)? = nil) -> UIWindow {
+        assert(nav.viewControllers.count == 1, "must setup rootViewController before present NavigationController!")
+        let root = nav.viewControllers.first!
         
         // adjust root
         root.view.backgroundColor = UIColor(white: 0, alpha: 0.1)
         root.view.alpha = 0
         
         // config nav
-        nav.viewControllers = [root]
         let defaultDelegate = PresentationNavDelegate()
         defaultDelegate.pushCompletion = completion
         delegation(nav, defaultDelegate)
         objc_setAssociatedObject(nav, &PresentationNavDelegate.Key, defaultDelegate, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
         
         // finally, do present without animation & push
-        present(async: async, action: {
-            $0.present(nav, animated: false, completion: {
-                action(nav, root)
-            })
+        present(nav, async: async, animated: false, completion: {[weak nav] in
+            nav?.pushViewController(vc, animated: animated)
         })
         
         return self
