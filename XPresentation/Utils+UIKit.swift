@@ -16,7 +16,7 @@ public final class PresentationWindow: UIWindow {
         
         var statusBarStyle: UIStatusBarStyle = .default
         var presentationWindow: PresentationWindow?
-        var present: (() -> Void)?
+        var present: ((_ root: UIViewController) -> Void)?
         
         override func loadView() {
             super.loadView()
@@ -25,8 +25,15 @@ public final class PresentationWindow: UIWindow {
         
         override func viewDidAppear(_ animated: Bool) {
             super.viewDidAppear(animated)
-            present?()
+            present?(self)
             present = nil
+        }
+        
+        override func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
+            if !(objc_getAssociatedObject(viewControllerToPresent, &UIViewController.XPresentation_HasSetStyleKey) as? Bool ?? false) {
+                viewControllerToPresent.modalPresentationStyle = .fullScreen
+            }
+            super.present(viewControllerToPresent, animated: flag, completion: completion)
         }
     }
     
@@ -37,7 +44,7 @@ public final class PresentationWindow: UIWindow {
         }
     }
     
-    public init(level: UIWindow.Level, preferredStatusBarStyle: UIStatusBarStyle) {
+    public init(level: UIWindow.Level, preferredStatusBarStyle: UIStatusBarStyle = .default) {
         super.init(frame: UIScreen.main.bounds)
         let root = RootViewController()
         root.statusBarStyle = preferredStatusBarStyle
@@ -57,7 +64,6 @@ public final class PresentationWindow: UIWindow {
         }
     }
     
-    
     /// present vc in another window.
     /// - Parameter vc: ViewController to be presented.
     /// - Parameter animated: should use animation.
@@ -66,20 +72,19 @@ public final class PresentationWindow: UIWindow {
     /// - Important: vc's modalPresentationStyle is default to **fullScreen**. Explicit set it if you want other.
     @discardableResult
     public func present(_ vc: UIViewController, animated: Bool = true, completion: (() -> Void)? = nil) -> UIWindow {
-        defer {
-            makeKeyAndVisible()
-        }
-        
-        if !(objc_getAssociatedObject(self, &UIViewController.XPresentation_HasSetStyleKey) as? Bool ?? false) {
-            vc.modalPresentationStyle = .fullScreen
-        }
-        
+        return present({ root in
+            root.present(vc, animated: animated, completion: completion)
+        })
+    }
+    
+    /// present vc in another window using the `root`.
+    /// - Parameter action: present action. using provided root to perform present.
+    ///
+    /// - Important: presented ViewController's modalPresentationStyle is default to **fullScreen**. Explicit set it if you want other.
+    @discardableResult
+    public func present(_ action: @escaping (_ root: UIViewController) -> Void) -> UIWindow {
         // retain cycle will be resolved after dismiss
-        (rootViewController as? RootViewController)?.present = {
-            defer {
-                self.rootViewController?.present(vc, animated: animated, completion: completion)
-            }
-            
+        (rootViewController as? RootViewController)?.present = { root in
             //
             final class Trigger: NSObject {
                 static var associatedKey = "XPresentation.Trigger.Key"
@@ -94,9 +99,14 @@ public final class PresentationWindow: UIWindow {
             trigger.completion = {[weak self] in
                 (self?.rootViewController as? RootViewController)?.presentationWindow = nil
             }
-            objc_setAssociatedObject(vc, &Trigger.associatedKey, trigger, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            
+            action(root)
+            if let presented = root.presentedViewController {
+                objc_setAssociatedObject(presented, &Trigger.associatedKey, trigger, .OBJC_ASSOCIATION_RETAIN_NONATOMIC)
+            }
         }
         
+        makeKeyAndVisible()
         return self
     }
 }

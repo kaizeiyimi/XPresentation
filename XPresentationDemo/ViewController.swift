@@ -39,7 +39,10 @@ class ViewController: UIViewController {
         
 //        present(page, animated: true, completion: nil)
         
-        PresentationWindow(level: UIWindow.Level(1999), preferredStatusBarStyle: .lightContent).present(page, animated: true)
+//        let alert = UIAlertController(title: "hello", message: "world", preferredStyle: .alert)
+        
+//        page.modalPresentationStyle = .fullScreen
+        PresentationWindow(level: UIWindow.Level(1)).present(page, animated: true)
 
         // popover
 //        let width = page.view.widthAnchor.constraint(equalToConstant: 200)
