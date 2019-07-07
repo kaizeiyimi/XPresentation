@@ -14,33 +14,32 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "test", style: .plain, target: nil, action: nil)
     }
 
     @IBAction func onTap(sender: UIButton) {
         let page = PresentedPage()
         
         // present
-        let nav = UINavigationController(rootViewController: page)
-        nav.modalPresentationCapturesStatusBarAppearance = true
-        nav.view.layer.masksToBounds = true
-        nav.view.layer.cornerRadius = 8
+//        let nav = UINavigationController(rootViewController: page)
+//        nav.modalPresentationCapturesStatusBarAppearance = true
+//        nav.view.layer.masksToBounds = true
+//        nav.view.layer.cornerRadius = 8
 
         // config presentation
-        nav.configPresentation { config in
-            config.presentAnimation = Presentation.BasicAnimation.spring(
-                action: .present(Presentation.Layouts.center(width: .percent(0.75), height: .value(300))),
-                animator: Presentation.Animations.fadeIn())
-            config.dismissAnimation = Presentation.BasicAnimation.normal(
-                action: .dismiss,
-                animator: Presentation.Animations.fadeOut())
-            config.controller = Presentation.basicPresentationController()
-        }
+//        nav.configPresentation { config in
+//            config.presentAnimation = Presentation.BasicAnimation.spring(
+//                action: .present(Presentation.Layouts.center(width: .percent(0.75), height: .value(300))),
+//                animator: Presentation.Animations.fadeIn())
+//            config.dismissAnimation = Presentation.BasicAnimation.normal(
+//                action: .dismiss,
+//                animator: Presentation.Animations.fadeOut())
+//            config.controller = Presentation.basicPresentationController(dismissOnTapDimmingView: true)
+//        }
         
-        present(nav, animated: true, completion: nil)
+//        present(page, animated: true, completion: nil)
         
-//        PresentationWindow(level: UIWindow.Level(1999), preferredStatusBarStyle: .lightContent)
-//            .present(nav)
-        
+        PresentationWindow(level: UIWindow.Level(1999), preferredStatusBarStyle: .lightContent).present(page, animated: true)
 
         // popover
 //        let width = page.view.widthAnchor.constraint(equalToConstant: 200)
@@ -79,8 +78,13 @@ class PresentedPage: UIViewController {
 
     }
     
+    deinit {
+        print("presentd page deinit")
+    }
+    
     @objc private func back() {
-        dismiss(animated: true, completion: nil)
+//        dismiss(animated: true, completion: nil)
+        navigationController?.popViewController(animated: true)
     }
     
     @objc private func change() {

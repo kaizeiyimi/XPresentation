@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		F6E3C28522D0E3DB0011EDFE /* Swizzle.m in Sources */ = {isa = PBXBuildFile; fileRef = F6E3C28422D0E3DB0011EDFE /* Swizzle.m */; };
 		F6FB006821746E9600B1D35F /* XPresentation.h in Headers */ = {isa = PBXBuildFile; fileRef = F6FB006621746E9600B1D35F /* XPresentation.h */; settings = {ATTRIBUTES = (Public, ); }; };
 		F6FB007521746F0E00B1D35F /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6FB007421746F0E00B1D35F /* AppDelegate.swift */; };
 		F6FB007721746F0E00B1D35F /* ViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = F6FB007621746F0E00B1D35F /* ViewController.swift */; };
@@ -50,6 +51,7 @@
 		F6DB62EA217744530062FBDF /* README.md */ = {isa = PBXFileReference; lastKnownFileType = net.daringfireball.markdown; path = README.md; sourceTree = "<group>"; };
 		F6DB62EB217744530062FBDF /* LICENSE */ = {isa = PBXFileReference; lastKnownFileType = text; path = LICENSE; sourceTree = "<group>"; };
 		F6DB62EC217744700062FBDF /* XPresentation.podspec.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; path = XPresentation.podspec.json; sourceTree = "<group>"; };
+		F6E3C28422D0E3DB0011EDFE /* Swizzle.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = Swizzle.m; sourceTree = "<group>"; };
 		F6FB006321746E9600B1D35F /* XPresentation.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = XPresentation.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6FB006621746E9600B1D35F /* XPresentation.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = XPresentation.h; sourceTree = "<group>"; };
 		F6FB006721746E9600B1D35F /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
@@ -115,6 +117,7 @@
 				F6FB008F2174978300B1D35F /* Utils+Layouts.swift */,
 				F6FB00912174A14300B1D35F /* Utils+Animations.swift */,
 				F6FB00972175DE0300B1D35F /* Utils+UIKit.swift */,
+				F6E3C28422D0E3DB0011EDFE /* Swizzle.m */,
 				F6FB006621746E9600B1D35F /* XPresentation.h */,
 				F6FB006721746E9600B1D35F /* Info.plist */,
 			);
@@ -197,7 +200,7 @@
 				TargetAttributes = {
 					F6FB006221746E9600B1D35F = {
 						CreatedOnToolsVersion = 10.0;
-						LastSwiftMigration = 1020;
+						LastSwiftMigration = 1100;
 					};
 					F6FB007121746F0D00B1D35F = {
 						CreatedOnToolsVersion = 10.0;
@@ -253,6 +256,7 @@
 				F6FB00962175DBC400B1D35F /* Utils+PresentationController.swift in Sources */,
 				F6FB00922174A14300B1D35F /* Utils+Animations.swift in Sources */,
 				F6FB00982175DE0300B1D35F /* Utils+UIKit.swift in Sources */,
+				F6E3C28522D0E3DB0011EDFE /* Swizzle.m in Sources */,
 				F6FB00902174978300B1D35F /* Utils+Layouts.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -436,6 +440,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = yimi.kaizei.XPresentation;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
@@ -463,6 +468,7 @@
 					"@executable_path/Frameworks",
 					"@loader_path/Frameworks",
 				);
+				MARKETING_VERSION = 2.0;
 				PRODUCT_BUNDLE_IDENTIFIER = yimi.kaizei.XPresentation;
 				PRODUCT_NAME = "$(TARGET_NAME:c99extidentifier)";
 				SKIP_INSTALL = YES;
