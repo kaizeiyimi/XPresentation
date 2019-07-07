@@ -14,6 +14,7 @@ class ViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         // Do any additional setup after loading the view, typically from a nib.
+        navigationItem.rightBarButtonItem = UIBarButtonItem(title: "test", style: .plain, target: nil, action: nil)
     }
 
     @IBAction func onTap(sender: UIButton) {
@@ -38,9 +39,7 @@ class ViewController: UIViewController {
         
 //        present(page, animated: true, completion: nil)
         
-//        PresentationWindow(level: UIWindow.Level(1999), preferredStatusBarStyle: .lightContent).present(page)
-        
-        PresentationWindow(level: UIWindow.Level(1999), preferredStatusBarStyle: .lightContent).presentTransparentRootNav(UINavigationController(rootViewController: UIViewController()), push: page)
+        PresentationWindow(level: UIWindow.Level(1999), preferredStatusBarStyle: .lightContent).present(page, animated: true)
 
         // popover
 //        let width = page.view.widthAnchor.constraint(equalToConstant: 200)
