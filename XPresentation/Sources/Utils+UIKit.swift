@@ -44,6 +44,18 @@ public final class PresentationWindow: UIWindow {
         }
     }
     
+    #if canImport(SwiftUI)  // means sdk13. for xcode10
+    @available(iOS 13, *)
+    public init(windowScene: UIWindowScene, level: UIWindow.Level, preferredStatusBarStyle: UIStatusBarStyle = .default) {
+        super.init(windowScene: windowScene)
+        let root = RootViewController()
+        root.statusBarStyle = preferredStatusBarStyle
+        
+        rootViewController = root
+        windowLevel = level
+    }
+    #endif
+    
     public init(level: UIWindow.Level, preferredStatusBarStyle: UIStatusBarStyle = .default) {
         super.init(frame: UIScreen.main.bounds)
         let root = RootViewController()
