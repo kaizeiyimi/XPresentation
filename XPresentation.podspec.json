@@ -18,5 +18,5 @@
     "git": "https://github.com/kaizeiyimi/XPresentation.git",
     "tag": "2.0.1"
   },
-  "source_files": ["XPresentation/Sources/**/*.swift", "XPresentation/Sources/**/*.m"]
+  "source_files": ["Sources/**/*.swift", "Sources/**/*.m"]
 }
