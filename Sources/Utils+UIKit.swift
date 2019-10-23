@@ -11,6 +11,10 @@ import UIKit
 /// make a window with a root VC for presentation
 public final class PresentationWindow: UIWindow {
     
+    /// set the default interface style when create a PresentationWindow
+    @available(iOS 13, *)
+    public static var defaultUserInterfaceStyle: UIUserInterfaceStyle = .unspecified
+    
     private final class RootViewController: UIViewController {
         override var preferredStatusBarStyle: UIStatusBarStyle { return statusBarStyle }
         
@@ -53,6 +57,7 @@ public final class PresentationWindow: UIWindow {
         
         rootViewController = root
         windowLevel = level
+        overrideUserInterfaceStyle = PresentationWindow.defaultUserInterfaceStyle
     }
     #endif
     
@@ -63,6 +68,9 @@ public final class PresentationWindow: UIWindow {
         
         rootViewController = root
         windowLevel = level
+        if #available(iOS 13, *) {
+            overrideUserInterfaceStyle = PresentationWindow.defaultUserInterfaceStyle
+        }
     }
     
     public required init?(coder aDecoder: NSCoder) {
