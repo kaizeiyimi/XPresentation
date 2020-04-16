@@ -1,5 +1,5 @@
 //
-//  LoadTrigger.m
+//  XPresentation_LoadTrigger.m
 //  XPresentation
 //
 //  Created by kaizei on 2019/7/6.
@@ -10,10 +10,10 @@
 #import <Foundation/Foundation.h>
 #import <objc/runtime.h>
 
-@interface LoadTrigger : NSObject
+@interface XPresentation_LoadTrigger : NSObject
 @end
 
-@implementation LoadTrigger
+@implementation XPresentation_LoadTrigger
 + (void)load {
     Method m1 = class_getInstanceMethod([UIViewController class], NSSelectorFromString(@"setModalPresentationStyle:"));
     Method m2 = class_getInstanceMethod([UIViewController class], NSSelectorFromString(@"XPresentation_setModalPresentationStyle:"));

@@ -5,6 +5,7 @@ import PackageDescription
 
 let package = Package(
     name: "XPresentation",
+    platforms: [.iOS(.v9)],
     products: [
         // Products define the executables and libraries produced by a package, and make them visible to other packages.
         .library(name: "XPresentation", targets: ["XPresentation"]),
