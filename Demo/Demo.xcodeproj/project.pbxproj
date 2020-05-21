@@ -58,6 +58,7 @@
 		F65903D622E018CC00249B36 /* Utils+Animations.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Utils+Animations.swift"; sourceTree = "<group>"; };
 		F65903D722E018CC00249B36 /* Swizzle.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = Swizzle.m; sourceTree = "<group>"; };
 		F65903D922E018CC00249B36 /* Utils+UIKit.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = "Utils+UIKit.swift"; sourceTree = "<group>"; };
+		F6BE526724765D6D002851B0 /* XPresentation.podspec.json */ = {isa = PBXFileReference; lastKnownFileType = text.json; name = XPresentation.podspec.json; path = ../../XPresentation.podspec.json; sourceTree = "<group>"; };
 		F6F6787622DC681E008A29AC /* Demo.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Demo.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		F6F6787922DC681E008A29AC /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F6F6787B22DC681E008A29AC /* SceneDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegate.swift; sourceTree = "<group>"; };
@@ -97,6 +98,7 @@
 		F65903C522E018B200249B36 /* XPresentation */ = {
 			isa = PBXGroup;
 			children = (
+				F6BE526724765D6D002851B0 /* XPresentation.podspec.json */,
 				F65903D122E018CC00249B36 /* Sources */,
 				F65903C622E018B200249B36 /* XPresentation.h */,
 				F65903C722E018B200249B36 /* Info.plist */,

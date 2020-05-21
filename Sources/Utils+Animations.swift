@@ -48,7 +48,7 @@ extension Presentation {
 
 // provides two basic animation wrapper
 extension Presentation.BasicAnimation {
-    public static func spring(action: Action, duration: TimeInterval = 0.3, usingSpringWithDamping: CGFloat = 0.997, initialSpringVelocity: CGFloat = 0.2, options: UIView.AnimationOptions = [],
+    public static func spring(action: Action, duration: TimeInterval = 0.45, usingSpringWithDamping: CGFloat = 1, initialSpringVelocity: CGFloat = 0.2, options: UIView.AnimationOptions = .curveEaseOut,
                               animator: @escaping @autoclosure () -> Presentation.Animations.Animator) -> Presentation.BasicAnimation {
         return Presentation.BasicAnimation(action: action, duration: duration) { context in
             let (prepare, animate) = animator()

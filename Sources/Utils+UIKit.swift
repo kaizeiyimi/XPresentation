@@ -29,8 +29,10 @@ public final class PresentationWindow: UIWindow {
         
         override func viewDidAppear(_ animated: Bool) {
             super.viewDidAppear(animated)
-            present?(self)
-            present = nil
+            DispatchQueue.main.async {
+                self.present?(self)
+                self.present = nil
+            }
         }
         
         override func present(_ viewControllerToPresent: UIViewController, animated flag: Bool, completion: (() -> Void)? = nil) {
@@ -41,14 +43,6 @@ public final class PresentationWindow: UIWindow {
         }
     }
     
-    deinit {
-        // FIXME: if not async. iOS 10 will crash.
-        DispatchQueue.main.async {
-            UIApplication.shared.delegate?.window??.makeKeyAndVisible()
-        }
-    }
-    
-    #if canImport(SwiftUI)  // means sdk13. for xcode10
     @available(iOS 13, *)
     public init(windowScene: UIWindowScene, level: UIWindow.Level, preferredStatusBarStyle: UIStatusBarStyle = .default) {
         super.init(windowScene: windowScene)
@@ -59,7 +53,6 @@ public final class PresentationWindow: UIWindow {
         windowLevel = level
         overrideUserInterfaceStyle = PresentationWindow.defaultUserInterfaceStyle
     }
-    #endif
     
     public init(level: UIWindow.Level, preferredStatusBarStyle: UIStatusBarStyle = .default) {
         super.init(frame: UIScreen.main.bounds)
